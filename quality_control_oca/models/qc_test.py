@@ -17,8 +17,21 @@ class QcTest(models.Model):
     _description = "Quality control test"
     _inherit = "mail.thread"
 
+    @api.model
     def object_selection_values(self):
-        return super().object_selection_values()
+        """Returns available models for reference field."""
+        return [
+            ("product.product", "Product"),
+            ("stock.picking", "Picking List"),
+            ("stock.move", "Stock Move"),
+            ("stock.lot", "Lot/Serial Number"),
+            ("mrp.production", "Manufacturing Order"),
+        ]
+
+    object_id = fields.Reference(
+        string="Reference",
+        selection=lambda self: self.object_selection_values(),
+    )
 
     @api.onchange("type")
     def onchange_type(self):
